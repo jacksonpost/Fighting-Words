@@ -1,0 +1,48 @@
+* {border: 0; margin: 0; padding: 0;}
+
+body{
+	background: #334;
+}
+
+a{
+	/*text-decoration: none;*/	
+	color: inherit;
+}
+#wrapper{
+	width: 100%;
+}
+.posterBox{
+	width:100%;
+	max-width:1200px;
+	margin-bottom: 15em;
+	display: block;
+	margin: 0 auto;
+}
+    .posterBox img{
+        width:45%;
+        margin: 2.5% 2% 2.5% 3%;	
+        display: inline-block;
+    }
+    .posterBox .snipBox{
+        display: inline-block;
+        width:45%;
+        margin: 5% 3% 2.5% 2%;
+    /**/
+        font-size: 3.5em;
+        line-height: 1em;
+    /**/	
+        color: #eee;
+        vertical-align: top;
+    }
+        .posterBox .snipBox .snip:hover{
+            cursor: crosshair;
+        }
+        .posterBox .snipBox .attribution{
+            font-size: 0.3em;
+            text-align: right;
+            margin-top: 2em;
+        }
+            .posterBox .snipBox .attribution a{
+                text-decoration: none;
+                font-style: italic;
+            }

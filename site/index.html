@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>FightingWords_0.1</title>
+    <meta name="description" content="Juxtaposition of WW1 soldier diaries and propaganda posters from the State Library of NSW, Australia">
+	<script type="text/javascript" src="scripts/jquery110.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="style/style.css">
+</head>
+<body>	
+
+<script type="text/javascript">
+
+var imgObs = [];
+var diaries = [];
+var diaryOb = {};
+var snippetOb = {};
+var posters;
+var snippets = [];
+
+$(document).ready(function(){ 
+
+	$.getJSON('data/posters_with_snippets.json', function(data) {
+		posters = data; //array
+	}).done(function(){
+
+		console.log("posters loaded");
+
+		for(var i=0; i<posters.length; i++){
+			var imgOb = $("<div class='posterBox'></div>");
+			$('#wrapper').append(imgOb);
+			loadImage(imgOb, i);
+		}
+	});
+});
+
+function loadImage(imgOb, i) {
+    //console.log('load '+posters[i].hires);
+
+	var img = new Image();
+	img.src = posters[i].hires;
+
+	img.onload = function() {
+		// Success
+		//console.log('ok');
+
+		$(imgOb).append("<a href='"+posters[i].album+"' target='_blank'><img class='posterimg' src='"+posters[i].hires+"' alt='' title='"+posters[i].phrases[posters[i].phrases.length-1]+"'></a>");
+
+		renderPoster(imgOb, i);
+
+	}
+
+	img.onerror = function(e) {
+		// Error
+		console.log(e);
+	}
+
+}
+
+function renderPoster(imgOb, i) {
+
+	posters[i]["step"]=0;
+
+	var h=posters[i].step;
+	var box = $("<div class='snipBox' id='"+posters[i].item+"'></div>");
+	var snip = $("<p class='snip'>"+posters[i].snippets[h].sentences[0]+"</p>").on('click', function(){
+		var it = $(this).parent().attr('id');
+		var result = posters.filter(function( obj ) {
+		  return obj.item == it;
+		});
+		$(this).parent().children().fadeOut(500, function(){
+			stepUp(result[0]);
+			$(this).text(result[0].snippets[result[0].step].sentences[0]);
+
+			var att = $("<p class='attribution'>&#8212; <a href='https://www.google.com.au/search?q=site:sl.nsw.gov.au+"+result[0].snippets[result[0].step].don+"' target='_blank'>"+result[0].snippets[result[0].step].title+"</a></p>");
+			$(this).parent().children(".attribution").replaceWith(att);
+		});
+		$(this).parent().children().fadeIn(500);
+
+	});
+	var att = $("<p class='attribution'>&#8212; <a href='https://www.google.com.au/search?q=site:sl.nsw.gov.au+"+posters[i].snippets[h].don+"' target='_blank'>"+posters[i].snippets[h].title+"</a></p>");
+	$(box).append(snip);
+	$(box).append(att);
+	$(imgOb).append(box);
+
+	checkHeight(imgOb);
+}
+
+function checkHeight(element) {
+    var h = $(element).find('.posterimg').first().height();
+    console.log(h);
+
+    var p = $(element).find('.snip').first();
+
+    for (fs=160; fs>0; fs--) {
+        if ( p.height() > h) {
+                p.css('font-size',fs);
+        } else fs = 0;
+    }
+}
+
+function stepUp(ob){
+	ob.step++;
+	if(ob.step>=ob.snippets.length){
+		ob.step=0;
+	}
+}
+
+function buildSequence(set){
+	// Build a sequence for a given set
+	var seq = [];
+	for(var h=0; h<set.length; h++){
+		seq[h]=set[h];
+	}
+	seq = shuffleSet(seq.length);
+	return seq;
+}
+
+function shuffleSet(len){  // return a random and unique array subset
+	var set=[];
+	var seq=[];
+	for(var j=0; j<len; j++){
+		seq.push(j);
+	}
+	for(var j=0; j<len; j++){
+		var num = Math.floor(Math.random()*seq.length);
+		set.push(seq[num]);
+		seq.splice(num,1);
+	}
+	return set;
+}
+
+</script>
+
+<div id="wrapper">
+</div>
+
+</body>
